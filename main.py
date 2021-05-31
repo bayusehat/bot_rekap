@@ -1,6 +1,6 @@
 import logging
 import psycopg2
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Filters
 from psycopg2 import Error
 from datetime import datetime
 import requests
@@ -26,8 +26,60 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def done(update, context):
-    url = open('./logs.png','rb')
+# def done(update, context):
+#     url = open('./logs.png','rb')
+#     rep = update.message.reply_to_message
+#     if rep is None:
+#         message_id = update.message.message_id
+#         chat_id = update.message.chat_id
+#         user = update.message.text
+#         username = update.message.from_user.username
+#         first_name = update.message.from_user.first_name
+#         last_name = update.message.from_user.last_name
+#         name = "{} {}".format(first_name,last_name)
+#         date = update.message.date
+#         tipe = update.message.chat.type
+#         is_reply = 2
+#     else:
+#         message_id = rep.message_id
+#         chat_id = rep.chat_id
+#         user = rep.text
+#         numbers = []
+#         for msg in user.split():
+#             if msg.isdigit():
+#                 numbers.append(int(msg))
+#         nd = numbers[0]
+#         username = rep.from_user.username
+#         first_name = rep.from_user.first_name
+#         last_name =rep.from_user.last_name
+#         name = "{} {}".format(first_name,last_name)
+#         date = rep.date
+#         tipe = rep.chat.type
+#         is_reply = 1
+
+#         #Self Value Message
+#         response = update.message.text
+#         user_reply = update.message.from_user.username
+        
+#         #query
+#         select_query = "select message_id from bot_rekap_main where message_id = '%s'"
+#         sc = connection.cursor()
+#         sc.execute(select_query,(message_id,))
+#         row = sc.fetchall()
+#         rowcount = len(row)
+#         if rowcount > 0 :
+#             if row[0][0] == message_id:
+#                 return context.bot.send_message(chat_id=chat_id,text="Pesan ini sudah di reply, failed insert to Database!")
+
+#     pesan = "{}".format(user.replace('/done',''))
+#     insert_query = """insert into bot_rekap_main(nama,username,message,type,tgl,is_reply,message_id,nd,response,user_reply) 
+#         values('{}','{}','{}','{}','{}',{},{},'{}','{}','{}')""".format(name,username,pesan,tipe,date,is_reply,message_id,nd,response,user_reply)
+#     cursor.execute(insert_query)
+#     connection.commit()
+#     notif = "Stored in Database,successfully! \n[Pesan dari : {} ; Text : {} ; Tanggal : {} ] group id = {} ".format(name,pesan,date,chat_id)
+#     return context.bot.send_message(chat_id=-530820999,text=notif)
+
+def echo(update, context):
     rep = update.message.reply_to_message
     if rep is None:
         message_id = update.message.message_id
@@ -71,7 +123,7 @@ def done(update, context):
             if row[0][0] == message_id:
                 return context.bot.send_message(chat_id=chat_id,text="Pesan ini sudah di reply, failed insert to Database!")
 
-    pesan = "{}".format(user.replace('/done',''))
+    pesan = "{}".format(user)
     insert_query = """insert into bot_rekap_main(nama,username,message,type,tgl,is_reply,message_id,nd,response,user_reply) 
         values('{}','{}','{}','{}','{}',{},{},'{}','{}','{}')""".format(name,username,pesan,tipe,date,is_reply,message_id,nd,response,user_reply)
     cursor.execute(insert_query)
@@ -79,10 +131,13 @@ def done(update, context):
     notif = "Stored in Database,successfully! \n[Pesan dari : {} ; Text : {} ; Tanggal : {} ] group id = {} ".format(name,pesan,date,chat_id)
     return context.bot.send_message(chat_id=-530820999,text=notif)
 
+
 def main():
     updater = Updater('1894704804:AAGa7tvFU-WyJyAWWhz6ho_cuudcbQe7OdA',use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('done',done))
+    dp.add_handler(CommandHandler('done',echo))
+    dp.add_handler(MessageHandler(Filters.regex('done') ^ Filters.regex('Done') ^ Filters.regex('DONE'),echo))
+    # MessageHandler(Filters.regex('^Done$'), done, CommandHandler('start', start))
     updater.start_polling()
     updater.idle()
 
