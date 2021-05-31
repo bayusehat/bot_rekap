@@ -1,6 +1,5 @@
 import logging
 import psycopg2
-# from os import fspath
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 from psycopg2 import Error
 from datetime import datetime
@@ -26,10 +25,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# def get_url():
-#     contents = requests.get('https://random.dog/woof.json').json()    
-#     url = contents['url']
-#     return url
 
 def done(update, context):
     url = open('./logs.png','rb')
@@ -49,6 +44,11 @@ def done(update, context):
         message_id = rep.message_id
         chat_id = rep.chat_id
         user = rep.text
+        numbers = []
+        for msg in user.split():
+            if msg.isdigit():
+                numbers.append(int(msg))
+        nd = numbers[0]
         username = rep.from_user.username
         first_name = rep.from_user.first_name
         last_name =rep.from_user.last_name
@@ -56,9 +56,13 @@ def done(update, context):
         date = rep.date
         tipe = rep.chat.type
         is_reply = 1
+
+        #Self Value Message
+        response = update.message.text
+        user_reply = update.message.from_user.username
         
         #query
-        select_query = "select message_id from tbl_rekap_bot where message_id = '%s'"
+        select_query = "select message_id from bot_rekap_main where message_id = '%s'"
         sc = connection.cursor()
         sc.execute(select_query,(message_id,))
         row = sc.fetchall()
@@ -68,12 +72,12 @@ def done(update, context):
                 return context.bot.send_message(chat_id=chat_id,text="Pesan ini sudah di reply, failed insert to Database!")
 
     pesan = "{}".format(user.replace('/done',''))
-    insert_query = """insert into tbl_rekap_bot(nama,username,message,type,tgl,is_reply,message_id) 
-        values('{}','{}','{}','{}','{}',{},{})""".format(name,username,pesan,tipe,date,is_reply,message_id)
+    insert_query = """insert into bot_rekap_main(nama,username,message,type,tgl,is_reply,message_id,nd,response,user_reply) 
+        values('{}','{}','{}','{}','{}',{},{},'{}','{}','{}')""".format(name,username,pesan,tipe,date,is_reply,message_id,nd,response,user_reply)
     cursor.execute(insert_query)
     connection.commit()
-    notif = "Stored in Database,successfully! \n[Pesan dari : {} ; Text : {} ; Tanggal : {} ]".format(name,pesan,date)
-    return context.bot.send_message(chat_id=chat_id,text=notif)
+    notif = "Stored in Database,successfully! \n[Pesan dari : {} ; Text : {} ; Tanggal : {} ] group id = {} ".format(name,pesan,date,chat_id)
+    return context.bot.send_message(chat_id=-530820999,text=notif)
 
 def main():
     updater = Updater('1894704804:AAGa7tvFU-WyJyAWWhz6ho_cuudcbQe7OdA',use_context=True)
