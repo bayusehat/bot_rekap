@@ -46,7 +46,7 @@ def echo(update, context):
         for msg in user.split():
             if msg.isdigit():
                 numbers.append(int(msg))
-        nd = numbers[0]
+        nd = max(numbers)
         username = rep.from_user.username
         first_name = rep.from_user.first_name
         last_name =rep.from_user.last_name
@@ -59,7 +59,7 @@ def echo(update, context):
         response = update.message.text
         user_reply = update.message.from_user.username
         
-        #query
+        #Fetching Data from Database
         select_query = "select message_id from bot_rekap_main where message_id = '%s'"
         sc = connection.cursor()
         sc.execute(select_query,(message_id,))
