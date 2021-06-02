@@ -28,16 +28,17 @@ logger = logging.getLogger(__name__)
 def echo(update, context):
     rep = update.message.reply_to_message
     if rep is None:
-        message_id = update.message.message_id
-        chat_id = update.message.chat_id
-        user = update.message.text
-        username = update.message.from_user.username
-        first_name = update.message.from_user.first_name
-        last_name = update.message.from_user.last_name
-        name = "{} {}".format(first_name,last_name)
-        date = update.message.date
-        tipe = update.message.chat.type
-        is_reply = 2
+        return context.bot.send_message(chat_id=-530820999,text="Pesan tanpa Reply!")
+        # message_id = update.message.message_id
+        # chat_id = update.message.chat_id
+        # user = update.message.text
+        # username = update.message.from_user.username
+        # first_name = update.message.from_user.first_name
+        # last_name = update.message.from_user.last_name
+        # name = "{} {}".format(first_name,last_name)
+        # date = update.message.date
+        # tipe = update.message.chat.type
+        # is_reply = 2
     else:
         message_id = rep.message_id
         chat_id = rep.chat_id
@@ -67,7 +68,7 @@ def echo(update, context):
         rowcount = len(row)
         if rowcount > 0 :
             if row[0][0] == message_id:
-                return context.bot.send_message(chat_id=chat_id,text="Pesan ini sudah di reply, failed insert to Database!")
+                return context.bot.send_message(chat_id=-530820999,text="Pesan ini sudah di reply, failed insert to Database!")
 
     pesan = "{}".format(user)
     insert_query = """insert into bot_rekap_main(nama,username,message,type,tgl,is_reply,message_id,nd,response,user_reply) 
@@ -82,7 +83,16 @@ def main():
     updater = Updater('1894704804:AAGa7tvFU-WyJyAWWhz6ho_cuudcbQe7OdA',use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('done',echo))
-    dp.add_handler(MessageHandler(Filters.regex('done') ^ Filters.regex('Done') ^ Filters.regex('DONE'),echo))
+    dp.add_handler(MessageHandler(Filters.regex('done') 
+    ^ Filters.regex('Done') 
+    ^ Filters.regex('DONE')
+    ^ Filters.regex('sesuai')
+    ^ Filters.regex('Sesuai')
+    ^ Filters.regex('SESUAI')
+    ^ Filters.regex('sudah')
+    ^ Filters.regex('Sudah')
+    ^ Filters.regex('SUSAH')
+    ,echo))
     updater.start_polling()
     updater.idle()
 
