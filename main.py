@@ -8,7 +8,7 @@ import re
 
 #Connecting database
 try:
-    connection = psycopg2.connect(user="ccoper",password="ccoper2019",host="10.60.170.169",port="5432",database="ccoper")
+    connection = psycopg2.connect(user="ccoper",password="ccoper2019",host="10.60.170.169",port="5432",database="ccoper",keepalives=1,keepalives_idle=5,keepalives_interval=2,keepalives_count=2)
     cursor = connection.cursor()
     print("PostgreSQL server information")
     cursor.execute("SELECT version();")
