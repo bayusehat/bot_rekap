@@ -29,16 +29,6 @@ def echo(update, context):
     rep = update.message.reply_to_message
     if rep is None:
         return context.bot.send_message(chat_id=-530820999,text="Pesan tanpa Reply!")
-        # message_id = update.message.message_id
-        # chat_id = update.message.chat_id
-        # user = update.message.text
-        # username = update.message.from_user.username
-        # first_name = update.message.from_user.first_name
-        # last_name = update.message.from_user.last_name
-        # name = "{} {}".format(first_name,last_name)
-        # date = update.message.date
-        # tipe = update.message.chat.type
-        # is_reply = 2
     else:
         message_id = rep.message_id
         chat_id = rep.chat_id
@@ -91,7 +81,8 @@ def main():
     ^ Filters.regex('SESUAI')
     ^ Filters.regex('sudah')
     ^ Filters.regex('Sudah')
-    ^ Filters.regex('SUSAH')
+    ^ Filters.regex('SUDAH')
+    ^ Filters.regex('DOne')
     ,echo))
     updater.start_polling()
     updater.idle()
